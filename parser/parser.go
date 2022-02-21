@@ -2,18 +2,19 @@ package parser
 
 import (
 	"fmt"
-	"github.com/jinzhu/inflection"
-	"github.com/knocknote/vitess-sqlparser/tidbparser/ast"
-	"github.com/knocknote/vitess-sqlparser/tidbparser/dependency/mysql"
-	"github.com/knocknote/vitess-sqlparser/tidbparser/dependency/types"
-	"github.com/knocknote/vitess-sqlparser/tidbparser/parser"
-	"github.com/pkg/errors"
 	"go/format"
 	"io"
 	"sort"
 	"strings"
 	"sync"
 	"text/template"
+
+	"github.com/jinzhu/inflection"
+	"github.com/knocknote/vitess-sqlparser/tidbparser/ast"
+	"github.com/knocknote/vitess-sqlparser/tidbparser/dependency/mysql"
+	"github.com/knocknote/vitess-sqlparser/tidbparser/dependency/types"
+	"github.com/knocknote/vitess-sqlparser/tidbparser/parser"
+	"github.com/pkg/errors"
 )
 
 var (
@@ -182,14 +183,14 @@ func makeCode(stmt *ast.CreateTableStmt, opt options) (string, []string, error) 
 			case ast.ColumnOptionUniqKey:
 				gormTag.WriteString(";unique")
 			case ast.ColumnOptionNull:
-				//gormTag.WriteString(";NULL")
+				// gormTag.WriteString(";NULL")
 				canNull = true
 			case ast.ColumnOptionOnUpdate: // For Timestamp and Datetime only.
 			case ast.ColumnOptionFulltext:
 			case ast.ColumnOptionComment:
 				field.Comment = o.Expr.GetDatum().GetString()
 			default:
-				//return "", nil, errors.Errorf(" unsupport option %d\n", o.Tp)
+				// return "", nil, errors.Errorf(" unsupport option %d\n", o.Tp)
 			}
 		}
 		if !isPrimaryKey[colName] && isNotNull {
@@ -198,7 +199,7 @@ func makeCode(stmt *ast.CreateTableStmt, opt options) (string, []string, error) 
 		tags = append(tags, "gorm", gormTag.String())
 
 		if opt.JsonTag {
-			tags = append(tags, "json", colName)
+			tags = append(tags, "json", goFieldName)
 		}
 
 		field.Tag = makeTagStr(tags)
@@ -358,17 +359,19 @@ func toCamel(s string) string {
 }
 
 func initTemplate() {
-	tmplParseOnce.Do(func() {
-		var err error
-		structTmpl, err = template.New("goStruct").Parse(structTmplRaw)
-		if err != nil {
-			panic(err)
-		}
-		fileTmpl, err = template.New("goFile").Parse(fileTmplRaw)
-		if err != nil {
-			panic(err)
-		}
-	})
+	tmplParseOnce.Do(
+		func() {
+			var err error
+			structTmpl, err = template.New("goStruct").Parse(structTmplRaw)
+			if err != nil {
+				panic(err)
+			}
+			fileTmpl, err = template.New("goFile").Parse(fileTmplRaw)
+			if err != nil {
+				panic(err)
+			}
+		},
+	)
 }
 
 func init() {

@@ -52,3 +52,10 @@ sql := `CREATE TABLE t_person_info (
   );`
 data, err := parser.ParseSql(sql, WithTablePrefix("t_"), WithJsonTag())
 ```
+
+## Web tool
+```shell
+go run main --serve --serve-address :8080
+```
+
+启动 http://localhost:18080/

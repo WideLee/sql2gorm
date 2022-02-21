@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Sql to Gorm</title>
+    <meta charset="UTF-8">
+    <link rel="icon" href="data:image/ico;base64,aWNv">
+    <link rel="stylesheet" href="https://s2.pstatp.com/cdn/expire-1-M/highlight.js/9.15.6/styles/tomorrow.min.css">
+    <style>
+        html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {
+            border: 0;
+            font-size: 100%;
+            font: inherit;
+            vertical-align: baseline;
+            margin: 0;
+            padding: 0
+        }
+
+        article, aside, details, figcaption, figure, footer, header, hgroup, main, menu, nav, section {
+            display: block
+        }
+
+        body {
+            line-height: 1
+        }
+
+        ol, ul {
+            list-style: none
+        }
+
+        blockquote, q {
+            quotes: none
+        }
+
+        blockquote:before, blockquote:after, q:before, q:after {
+            content: none
+        }
+
+        table {
+            border-collapse: collapse;
+            border-spacing: 0
+        }
+
+        body {
+            font: 14px/1.25em sans-serif
+        }
+
+        code {
+            font-family: 'Consolas', 'Menlo', 'Monaco', 'Courier New', monospace;
+            padding: 0 3px
+        }
+
+        header {
+            padding: 20px
+        }
+
+        .options-div {
+            margin: 0 3%
+        }
+
+        .options-div div {
+            font-size: 15px;
+            margin-top: .3rem;
+            padding-left: .5rem
+        }
+
+        .options-div label {
+            display: inline-block;
+            min-width: 7.6rem;
+            width: 30%
+        }
+
+        .opt-lab {
+            margin-bottom: 5px;
+            font-size: 15px;
+            padding-left: 0 !important
+        }
+
+        .options-div select {
+            background-color: white;
+            border-radius: 3px;
+            border: .0625rem solid #979797;
+            color: inherit;
+            font-family: inherit;
+            font-size: 15px;
+            width: 60%;
+            min-width: 7rem;
+            margin-top: .2rem
+        }
+
+        .options-div input {
+            margin: 0;
+            -webkit-appearance: none;
+            box-sizing: border-box;
+            flex: 1;
+            border: .0625rem solid #979797;
+            border-radius: 3px;
+            padding: .2rem;
+            width: 60%;
+            min-width: 7rem;
+            margin-top: .2rem
+        }
+
+        .intro {
+            display: flex
+        }
+
+        .intro > div {
+            width: 33.33333%
+        }
+
+        .intro-text {
+            margin-top: 10px;
+            margin-bottom: 20px
+        }
+
+        h1 {
+            font-size: 34px;
+            font-weight: bold;
+            line-height: 1.5em
+        }
+
+        h2 {
+            font-size: 24px;
+            line-height: 1.3em
+        }
+
+        p {
+            margin-top: 20px;
+            line-height: 1.5em
+        }
+
+        p:first-child {
+            margin-top: 0
+        }
+
+        #brand {
+            max-width: 400px;
+            max-height: 150px;
+            float: right
+        }
+
+        table {
+            width: 100%;
+            table-layout: fixed
+        }
+
+        .body_table th {
+            padding: 15px;
+            background: #80d4e9;
+            text-align: center;
+            color: #000;
+            font-size: 20px
+        }
+
+        th label {
+            margin-left: 1em;
+            font-size: 14px;
+            cursor: pointer
+        }
+
+        td {
+            width: 50%;
+            vertical-align: top
+        }
+
+        #input, #output {
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            -o-box-sizing: border-box;
+            box-sizing: border-box;
+            white-space: pre;
+            width: 100%;
+            display: block;
+            padding: 3%;
+            font: 14px/1.5em 'Consolas', 'Menlo', 'Monaco', 'Courier New', monospace;
+            outline: 0;
+            border: 0;
+            resize: vertical;
+            min-height: 500px;
+            overflow: scroll;
+            tab-size: 4
+        }
+
+        #input {
+            background: #ecf2f5;
+            border-right: 2px solid #AAA
+        }
+
+        #output {
+            background: #e0ebf5
+        }
+
+        footer {
+            color: #888;
+            text-align: center;
+            padding: 25px 0 50px;
+            line-height: 2em
+        }
+
+        .clr-red {
+            color: #c00
+        }
+
+        .faulty-line {
+            color: #C00;
+            background: #FDD;
+            font-weight: bold
+        }
+
+        .json-go-faulty-char {
+            border: 1px solid purple
+        }
+
+        @media (max-width: 800px) {
+            .intro {
+                flex-direction: column
+            }
+
+            .intro > div {
+                width: 100%
+            }
+
+            #brand {
+                float: none;
+                margin: 20px auto;
+                display: block
+            }
+        }
+
+        .get-db {
+            padding: .5rem 1rem;
+            background: #5ea6ba;
+            font-size: 14px
+        }
+
+        .get-db label {
+            margin-right: 2rem
+        }
+
+        .get-db input {
+            width: 30%;
+            margin-right: 1rem;
+            -webkit-appearance: none;
+            box-sizing: border-box;
+            flex: 1;
+            border: .0625rem solid #979797;
+            border-radius: 3px;
+            padding: .2rem;
+            min-width: 7rem
+        }
+
+        .get-db select {
+            background-color: white;
+            border-radius: 3px;
+            border: .0625rem solid #979797;
+            color: inherit;
+            font-family: inherit;
+            min-width: 7rem;
+            height: 1.63rem;
+            margin-right: 1rem
+        }
+
+        .get-db button {
+            align-items: center;
+            background-color: #f7f9fa;
+            border: 0;
+            border-radius: 3px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            box-sizing: border-box;
+            color: #007d9c;
+            cursor: pointer;
+            display: inline;
+            font: bold .875rem Roboto, sans-serif;
+            height: 1.63rem;
+            padding: 0 .625rem;
+            justify-content: center;
+            text-decoration: none
+        }
+    </style>
+    <script src="https://s2.pstatp.com/cdn/expire-1-M/jquery/3.4.0/jquery.min.js"></script>
+    <script src="https://s2.pstatp.com/cdn/expire-1-M/highlight.js/9.15.6/highlight.min.js"></script>
+    <script src="https://s2.pstatp.com/cdn/expire-1-M/highlight.js/9.15.6/languages/sql.min.js"></script>
+    <script src="https://s1.pstatp.com/cdn/expire-1-M/highlight.js/9.15.6/languages/go.min.js"></script>
+    <script>
+        $(function () {
+            const exampleSql = `CREATE TABLE IF NOT EXISTS t_person_info
+                                (
+                                    age        INT(11) unsigned                      NULL,
+                                    id         BIGINT(11) PRIMARY KEY AUTO_INCREMENT NOT NULL COMMENT '这是id',
+                                    first_name VARCHAR(30)                           NOT NULL DEFAULT 'default_name' COMMENT '这是名字',
+                                    sex        VARCHAR(2)                            NULL,
+                                    birth      DATE,
+                                    comment    TEXT
+                                ) ENGINE = InnoDB;  `;
+            const emptyInputMsg = "Paste Sql here";
+            const emptyOutputMsg = "Go will appear here";
+            const formattedEmptyInputMsg = '<span style="color: #777;">' + emptyInputMsg + "</span>";
+            const formattedEmptyOutputMsg = '<span style="color: #777;">' + emptyOutputMsg + "</span>";
+            let inputElement = $("#input");
+            let outputElement = $("#output");
+            let formElement = $("#options_form");
+
+            function httpError(ele) {
+                return function (req, errorType) {
+                    console.log(req);
+                    let msg = "";
+                    if (req.status === 0) {
+                        msg = "获取数据失败"
+                    } else if (req.responseJSON) {
+                        msg = errorType + ": " + req.responseJSON.error
+                    } else {
+                        msg = errorType + ": " + req.responseText
+                    }
+                    ele.html("<p style='color: #BC6060'>" + msg + "</p>")
+                }
+            }
+
+            function doConversion() {
+                let input = inputElement.text().trim();
+                if (!input || input === emptyInputMsg) {
+                    outputElement.html(formattedEmptyOutputMsg);
+                    return
+                }
+                let options = formElement.serializeArray();
+                let req = {};
+                for (let i in options) {
+                    req[options[i].name] = options[i].value
+                }
+                localStorage.setItem("options", JSON.stringify(req));
+                localStorage.setItem("sql", input);
+                req["sql"] = input;
+                $.ajax({
+                    type: "POST",
+                    url: "/api/parse",
+                    contentType: "application/json",
+                    data: JSON.stringify(req),
+                    success: function (data) {
+                        console.log(data);
+                        let coloredOutput = hljs.highlight("go", data.code);
+                        let disText = "";
+                        if (!coloredOutput) {
+                            disText = data.code
+                        } else {
+                            disText = coloredOutput.value
+                        }
+                        outputElement.html(disText)
+                    },
+                    error: httpError(outputElement)
+                })
+            }
+
+            inputElement.on("focus", function () {
+                let val = $(this).text();
+                if (!val) {
+                    $(this).html(formattedEmptyInputMsg);
+                    outputElement.html(formattedEmptyOutputMsg)
+                } else if (val === emptyInputMsg)
+                    $(this).html("")
+            });
+            inputElement.on("blur", function () {
+                let val = $(this).text();
+                if (!val) {
+                    $(this).html(formattedEmptyInputMsg);
+                    outputElement.html(formattedEmptyOutputMsg)
+                }
+            }).blur();
+            inputElement.keydown(function (e) {
+                if (e.key === "Tab" && !e.metaKey && !e.ctrlKey && !e.altKey) {
+                    document.execCommand("insertHTML", false, "&#009");
+                    e.preventDefault()
+                }
+            });
+            var timeout;
+            inputElement.keyup(function () {
+                clearTimeout(timeout);
+                timeout = setTimeout(function () {
+                    doConversion()
+                }, 260)
+            });
+            formElement.change(function () {
+                clearTimeout(timeout);
+                timeout = setTimeout(function () {
+                    doConversion()
+                }, 260)
+            });
+            outputElement.click(function () {
+                if (document.selection) {
+                    let range = document.body.createTextRange();
+                    range.moveToElementText(this);
+                    range.select()
+                } else if (window.getSelection) {
+                    let range = document.createRange();
+                    range.selectNode(this);
+                    let sel = window.getSelection();
+                    if (sel.toString().length === 0) {
+                        sel.removeAllRanges();
+                        sel.addRange(range)
+                    }
+                }
+            });
+            $("#sample1").click(function () {
+                inputElement.text(exampleSql).keyup()
+            });
+            $("#get_create").click(function () {
+                let dsnEle = $("#dsn");
+                let dsn = dsnEle.val();
+                let tableName = $("#table_name").val();
+                localStorage.setItem("dsn", dsn);
+                localStorage.setItem("table_name", tableName);
+                if (dsnEle.attr("hidden")) {
+                    dsn = ""
+                }
+                $.ajax({
+                    type: "GET",
+                    url: "/api/table?" + $.param({
+                        dsn: dsn,
+                        table_name: tableName
+                    }),
+                    success: function (data) {
+                        console.log(data);
+                        let coloredOutput = hljs.highlight("sql", data.sql);
+                        let disText = "";
+                        if (!coloredOutput) {
+                            disText = data.sql
+                        } else {
+                            disText = coloredOutput.value
+                        }
+                        inputElement.html(disText);
+                        doConversion()
+                    },
+                    error: httpError(inputElement)
+                })
+            });
+            $("#dsn").val(localStorage.getItem("dsn"));
+            $("#table_name").val(localStorage.getItem("table_name"));
+            let defaultOptions = localStorage.getItem("options");
+            defaultOptions = JSON.parse(defaultOptions);
+            for (i in defaultOptions) {
+                formElement.find("[name='" + i + "']").val(defaultOptions[i])
+            }
+            if (window.location.search.indexOf("dsn=open") >= 0) {
+                $("#dsn").attr("hidden", false)
+            }
+            if (window.location.search.indexOf("db=open") >= 0) {
+                $(".get-db").attr("hidden", false)
+            }
+        });
+    </script>
+    <script>
+        var _hmt = _hmt || [];
+        (function () {
+                let hm = document.createElement("script");
+                hm.src = "https://hm.baidu.com/hm.js?fd02a22f36ac0ed38f975959779267df";
+                let s = document.getElementsByTagName("script")[0];
+                s.parentNode.insertBefore(hm, s);
+            }
+        )();
+    </script>
+</head>
+<body>
+<header>
+    <div class="intro">
+        <div class="title">
+            <h1>SQL to Gorm</h1>
+            <h2>Convert MySQL to Go Statement</h2>
+        </div>
+        <div class="intro-text">
+            <p>
+                This tool converts create statement of <b>mysql</b>
+                into Go type definition, and other SQL expressions
+                will be ignored. Paste create statement on the left and the equivalent Go type will be generated to
+                the right, which you can paste into your program. The script has to make some assumptions, so
+                double-check the output!
+
+            </p>
+            <p>
+                <a href="javascript:" id="sample1">Example SQL</a>
+            </p>
+        </div>
+        <div class="options-div">
+            <form id="options_form">
+                <div class="opt-lab">
+                    <label>Options:</label>
+                </div>
+                <div>
+                    <label>Column Prefix:</label>
+                    <input name="col_prefix" type="text"/>
+                </div>
+                <div>
+                    <label>Table Prefix:</label>
+                    <input name="table_prefix" type="text" value="t_">
+                </div>
+                <div>
+                    <label>Json Tag:</label>
+                    <select name="json">
+                        <option value="false">exclude</option>
+                        <option value="true">include</option>
+                    </select>
+                </div>
+                <div>
+                    <label>Package name:</label>
+                    <input name="package" type="text"/>
+                </div>
+                <div>
+                    <label>Use Null Type:</label>
+                    <select name="no_null">
+                        <option value="true">no</option>
+                        <option value="false">yes</option>
+                    </select>
+                </div>
+                <div>
+                    <label>Null Style:</label>
+                    <select name="null_style">
+                        <option value="sql">sql.NullXxx</option>
+                        <option value="ptr">*xxxx</option>
+                    </select>
+                </div>
+                <div>
+                    <label>With Type:</label>
+                    <select name="gorm_type">
+                        <option value="true">yes</option>
+                        <option value="false" selected>no</option>
+                    </select>
+                </div>
+                <div>
+                    <label>Func TableName:</label>
+                    <select name="force_tablename">
+                        <option value="true">force</option>
+                        <option value="false" selected>auto</option>
+                    </select>
+                </div>
+            </form>
+        </div>
+    </div>
+</header>
+<table class="body_table">
+    <tr>
+        <th style="width: 45%;">SQL</th>
+        <th style="width: 10%; font-size: 22px;">&#8594;</th>
+        <th style="width: 45%;">Go</th>
+    </tr>
+</table>
+<table class="body_table">
+    <tr>
+        <td style="width: 50%;">
+            <div> <code class="language-sql" id="input" contenteditable></code> </div>
+        </td>
+        <td style="width: 50%;">
+            <div id="output"></div>
+        </td>
+    </tr>
+</table>
+<footer>
+    &copy;2021 Cascax <a href="https://github.com/cascax/sql2gorm">Github:sql2gorm</a>
+</footer>
+</body>
+</html>
