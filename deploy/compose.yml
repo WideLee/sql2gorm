@@ -1,0 +1,8 @@
+version: '2'
+
+services:
+  sql2gorm:
+    build: .
+    ports:
+      - '18080:18080'
+    restart: always

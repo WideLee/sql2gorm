@@ -438,12 +438,6 @@
             for (i in defaultOptions) {
                 formElement.find("[name='" + i + "']").val(defaultOptions[i])
             }
-            if (window.location.search.indexOf("dsn=open") >= 0) {
-                $("#dsn").attr("hidden", false)
-            }
-            if (window.location.search.indexOf("db=open") >= 0) {
-                $(".get-db").attr("hidden", false)
-            }
         });
     </script>
     <script>
@@ -484,7 +478,7 @@
                 </div>
                 <div>
                     <label>Column Prefix:</label>
-                    <input name="col_prefix" type="text"/>
+                    <input name="col_prefix" type="text" value="f_"/>
                 </div>
                 <div>
                     <label>Table Prefix:</label>
@@ -493,8 +487,8 @@
                 <div>
                     <label>Json Tag:</label>
                     <select name="json">
+                        <option value="true" selected>include</option>
                         <option value="false">exclude</option>
-                        <option value="true">include</option>
                     </select>
                 </div>
                 <div>
@@ -505,21 +499,21 @@
                     <label>Use Null Type:</label>
                     <select name="no_null">
                         <option value="true">no</option>
-                        <option value="false">yes</option>
+                        <option value="false" selected>yes</option>
                     </select>
                 </div>
                 <div>
                     <label>Null Style:</label>
                     <select name="null_style">
+                        <option value="ptr" selected>*xxxx</option>
                         <option value="sql">sql.NullXxx</option>
-                        <option value="ptr">*xxxx</option>
                     </select>
                 </div>
                 <div>
                     <label>With Type:</label>
                     <select name="gorm_type">
-                        <option value="true">yes</option>
-                        <option value="false" selected>no</option>
+                        <option value="true" selected>yes</option>
+                        <option value="false">no</option>
                     </select>
                 </div>
                 <div>
